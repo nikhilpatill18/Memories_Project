@@ -17,6 +17,6 @@ app.use(cors())
 
 import { postrouter } from "./routes/posts.routes.js";
 
-app.use('/api', postrouter)
+app.use('/app', postrouter)
 
 export default app

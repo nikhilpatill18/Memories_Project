@@ -2,6 +2,7 @@ import { PostMessage } from "../models/postMessage.model.js"
 import { asynchandler } from "../utils/asynchandler.js"
 import { apiresponse } from "../utils/apiresponse.js"
 import { apierror } from "../utils/apierror.js"
+import { uploadoncloudinary } from "../utils/fileupload.js"
 const posts = async (req, res) => {
     res.status(200).json({
         sucess: "ok"
@@ -17,12 +18,24 @@ const createpost = asynchandler(
                 throw new apierror(300, "title is required")
             }
 
+            const localfilepath = req.file.path;
+            if (!localfilepath) {
+                throw new apierror(300, "file not found")
+            }
+
+            const uploadfile = await uploadoncloudinary(localfilepath)
+
+            if (!uploadfileupload) {
+                throw new apierror(300, "unable to upload the files")
+            }
+
 
             const posts = await PostMessage.create({
                 title: title,
                 creator: creator,
                 tags: tags,
-                message: message
+                message: message,
+                selectedfile: uploadfile.url
 
             })
             if (!posts) {
@@ -38,5 +51,41 @@ const createpost = asynchandler(
 )
 
 
+const updatepost = asynchandler(async (req, res) => {
+    try {
+        const { postID } = req.params
+        const { title, message, creator, tags } = req.body
+        const post = await PostMessage.findByIdAndUpdate(postID, {
+            $set: {
+                title: title,
+                message: message,
+                creator: creator,
+                tags: tags
+            }
+        })
+        if (!post) {
+            throw new apierror(300, "post not found")
+        }
+        return res.status(200).json(new apiresponse(200, post, "post updated"))
+    }
+    catch (error) {
+        throw new apierror(300, error.message)
+    }
+})
 
-export { posts }
+const deletepost = asynchandler(async (req, res) => {
+    const { postId } = req.params
+
+    if (!postId) {
+        throw new apierror(404, "post not found")
+    }
+    const deletepost = await PostMessage.deleteById(postId)
+
+    if (!deletepost) {
+        throw new apierror("Unbale to delete the post")
+    }
+    return res.status(200).json(new apiresponse(200, deletepost, "post deleted sucessfully"))
+})
+
+
+export { posts, createpost }

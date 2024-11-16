@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { posts } from "../controller/posts.controller.js";
+import { posts, createpost } from "../controller/posts.controller.js";
+import { upload } from "../middleware/multer.middleware.js";
 
 const postrouter = Router();
 
-postrouter.route('/post').post(posts)
+postrouter.route('/creatpost').post(upload.single('selectedfile'), createpost)
 
 export { postrouter }
