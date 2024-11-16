@@ -11,11 +11,6 @@ const postSchema = new Schema({
     creator: {
         type: String,
     },
-    tags: [
-        {
-            type: String,
-        }
-    ],
     selectedfile: {
         type: String,
     },

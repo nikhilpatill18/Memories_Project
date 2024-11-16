@@ -9,46 +9,44 @@ const posts = async (req, res) => {
     })
 }
 
-const createpost = asynchandler(
+const createpost =
     async (req, res) => {
-        try {
-            const { title, message, creator, tags } = req.body
 
-            if (!title) {
-                throw new apierror(300, "title is required")
-            }
+        const { title, message, creator, tags } = req.body
 
-            const localfilepath = req.file.path;
-            if (!localfilepath) {
-                throw new apierror(300, "file not found")
-            }
-
-            const uploadfile = await uploadoncloudinary(localfilepath)
-
-            if (!uploadfileupload) {
-                throw new apierror(300, "unable to upload the files")
-            }
-
-
-            const posts = await PostMessage.create({
-                title: title,
-                creator: creator,
-                tags: tags,
-                message: message,
-                selectedfile: uploadfile.url
-
-            })
-            if (!posts) {
-                throw new apierror(300, "Failed to create post")
-            }
-            return res.status(200).json(new apiresponse(200, posts, "Post created Sucssfully"))
-        } catch (error) {
-            throw new apierror(300, error.message)
-
+        if (!title) {
+            throw new apierror(300, "title is required")
         }
 
+        const localfilepath = req.file.path;
+        if (!localfilepath) {
+            throw new apierror(300, "file not found")
+        }
+
+        const uploadfile = await uploadoncloudinary(localfilepath)
+        console.log(localfilepath)
+        console.log(uploadfile)
+
+        if (!uploadfile) {
+            throw new apierror(300, "unable to upload the files")
+        }
+
+
+        const posts = await PostMessage.create({
+            title: title,
+            creator: creator,
+            tags: tags,
+            message: message,
+            selectedfile: uploadfile.url
+
+        })
+        if (!posts) {
+            throw new apierror(300, "Failed to create post")
+        }
+        return res.status(200).json(new apiresponse(200, posts, "Post created Sucssfully"))
+
     }
-)
+
 
 
 const updatepost = asynchandler(async (req, res) => {
