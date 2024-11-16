@@ -8,6 +8,35 @@ const posts = async (req, res) => {
     })
 }
 
+const createpost = asynchandler(
+    async (req, res) => {
+        try {
+            const { title, message, creator, tags } = req.body
+
+            if (!title) {
+                throw new apierror(300, "title is required")
+            }
+
+
+            const posts = await PostMessage.create({
+                title: title,
+                creator: creator,
+                tags: tags,
+                message: message
+
+            })
+            if (!posts) {
+                throw new apierror(300, "Failed to create post")
+            }
+            return res.status(200).json(new apiresponse(200, posts, "Post created Sucssfully"))
+        } catch (error) {
+            throw new apierror(300, error.message)
+
+        }
+
+    }
+)
+
 
 
 export { posts }
