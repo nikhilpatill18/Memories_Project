@@ -1,8 +1,10 @@
 import axios from "axios"
+import { createAsyncThunk } from "@reduxjs/toolkit";
 
-const deletepost = async (id) => {
+export const deletePost = async (id) => {
     try {
-        const response = await axios.delete(`https://localhost:4000/app/delete/${id}`);
+        const response = await axios.delete(`http://localhost:4000/app/delete/${id}`);
+        // console.log("deleted data is coming hello", response)a
 
         return response
     }
@@ -10,3 +12,22 @@ const deletepost = async (id) => {
         console.log(err)
     }
 }
+
+export const createpost = async (formdata) => {
+    const response = await axios.post('http://localhost:4000/app/createpost', formdata, {
+        headers: {
+            'Content-Type': 'multipart/form-data', // Set the content type for file upload
+        },
+    })
+    return response
+}
+
+export const updatepost = async (formdata, post_id) => {
+    const response = await axios.patch(`http://localhost:4000/app/update/${post_id}`, formdata, {
+        headers: {
+            'Content-Type': 'multipart/form-data', // Set the content type for file upload
+        },
+    })
+    return response
+}
+

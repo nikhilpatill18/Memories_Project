@@ -5,7 +5,7 @@ import { apierror } from "../utils/apierror.js"
 import { uploadoncloudinary } from "../utils/fileupload.js"
 const posts = async (req, res) => {
     const posts = await PostMessage.find()
-    console.log(posts)
+    // console.log(posts)
 
     return res.status(200).json(new apiresponse(200, posts, "get successfully"))
 }
@@ -36,7 +36,6 @@ const createpost =
         const posts = await PostMessage.create({
             title: title,
             creator: creator,
-            tags: tags,
             message: message,
             selectedfile: uploadfile.url
 
@@ -81,11 +80,6 @@ const updatepost = async (req, res) => {
                 new: true
             }
         )
-
-        // console.log("-----------------------------------------------------------------------------------")
-        // console.log(post)
-
-
         if (!post) {
             throw new apierror(300, "post not found")
         }
@@ -102,7 +96,7 @@ const deletepost = async (req, res) => {
     if (!postID) {
         throw new apierror(404, "post not found")
     }
-    const deletepost = await PostMessage.deleteById(postId)
+    const deletepost = await PostMessage.deleteOne({ _id: postID })
 
     if (!deletepost) {
         throw new apierror("Unbale to delete the post")

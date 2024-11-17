@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react'
 
 import { useSelector, useDispatch } from 'react-redux'
 
-import { createpost, fetchPostsAsync, updatepost } from '../../redux/postslice'
+import { fetchPostsAsync } from '../../redux/postslice'
 
-import { addPost } from '../../redux/postslice'
+import { addPost, updatePost } from '../../redux/postslice'
 import axios from 'axios'
-import { current } from '@reduxjs/toolkit'
+import { createpost, updatepost } from '../../apicalling/api'
 
 
 const Form = ({ currentpost, setcurrentpost }) => {
@@ -19,14 +19,10 @@ const Form = ({ currentpost, setcurrentpost }) => {
 
     const status = useSelector((state) => state.posts.status)
 
-
-
     const handleFileChange = (e) => {
         const selectedFile = e.target.files[0];
         setfile(selectedFile);
     }
-
-
     useEffect(() => {
         if (currentpost) {
             setTitle(currentpost.title)
@@ -48,28 +44,41 @@ const Form = ({ currentpost, setcurrentpost }) => {
         if (file) {
             formdata.append('selectedfile', file)
         }
-        try {
-            const response = await axios.post('http://localhost:4000/app/createpost', formdata, {
-                headers: {
-                    'Content-Type': 'multipart/form-data', // Set the content type for file upload
-                },
-            })
-            // console.log(response)
-            if (response.status === 200) {
-                dispatch(addPost(response.data));
-                console.log('Post added successfully');
-                setTitle('')
-                setMessage('')
-                setCreator('')
-                setfile(null)
-            }
-            else {
-                console.log("some error")
 
-            }
+        // check if tonupdate the current post
+
+        if (currentpost) {
+            const response = await updatepost(formdata, currentpost._id)
+            dispatch(updatePost(response.data))
+            console.log("data updated successfully")
+            setTitle('')
+            setMessage('')
+            setCreator('')
+            setfile(null)
+
         }
-        catch (err) {
-            console.log(err)
+        else {
+
+            //execute when new post is created
+            try {
+                const response = await createpost(formdata)
+                // console.log(response)
+                if (response.status === 200) {
+                    dispatch(addPost(response.data));
+                    console.log('Post added successfully');
+                    setTitle('')
+                    setMessage('')
+                    setCreator('')
+                    setfile(null)
+                }
+                else {
+                    console.log("some error")
+
+                }
+            }
+            catch (err) {
+                console.log(err)
+            }
         }
 
 
@@ -127,7 +136,7 @@ const Form = ({ currentpost, setcurrentpost }) => {
                 type="submit"
                 className="w-full bg-gradient-to-r from-pink-500 to-yellow-500 text-white p-3 rounded-md shadow-lg font-semibold hover:bg-gradient-to-l"
             >
-                Submit Post
+                {currentpost ? 'Update Post' : 'Submit Post'}
             </button>
         </form>
     )

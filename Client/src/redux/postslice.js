@@ -1,21 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-
-export const createpost = createAsyncThunk(
-    async (postdata) => {
-        const response = await axios.post("http://localhost:4000/app/creatpost", postdata, {
-            headers: {
-                'Content-Type': 'multipart/form-data', // Set the content type for file upload
-            },
-        })
-        // console.log(response)
-        return response.data
-    }
-)
-
-
-
-
 export const fetchPostsAsync = createAsyncThunk(
 
     'posts/fetchPosts',
@@ -31,19 +15,24 @@ const initialState = {
     status: 'idle',
     error: null
 }
-
 const postsslice = createSlice({
     name: 'posts',
     initialState,
     reducers: {
-        // fetchPosts: (state, action) => {
-        //     console.log(action, "njkn")
-        //     state.posts = action.payload
-        // },
         addPost: (state, action) => {
             state.posts.push(action.payload)
         },
-        deletepost: (state, action) => { }
+        updatePost: (state, action) => {
+            const updatedPost = action.payload;
+            state.posts = state.posts.map(post =>
+                post._id === updatedPost._id ? updatedPost : post
+            );
+        },
+
+        deletepost: (state, action) => {
+            const postId = action.payload;
+            state.posts = state.posts.filter(post => post._id !== postId);
+        },
 
     }
     ,
@@ -61,22 +50,10 @@ const postsslice = createSlice({
                 state.status = 'failed';
                 state.error = action.error.message;
             })
-            // .addCase(createpost.fulfilled, (state, action) => {
-            //     state.posts.push(action.payload);  // Add new post to the state
-            // });.
-            .addCase(updatepost.fulfilled, (state, action) => {
-                state.posts = state.posts.map((post) => {
-                    console.log(post._id)
-                    if (post._id == action.payload._id) {
-                        return action.payload
-                    }
-                    return post
-                })
-            })
     },
 
 })
 
-export const { fetchPosts, addPost } = postsslice.actions;
+export const { fetchPosts, addPost, updatePost, deletepost } = postsslice.actions;
 
 export default postsslice.reducer
