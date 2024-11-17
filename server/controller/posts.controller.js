@@ -25,8 +25,8 @@ const createpost =
         }
 
         const uploadfile = await uploadoncloudinary(localfilepath)
-        console.log(localfilepath)
-        console.log(uploadfile)
+        // console.log(localfilepath)
+        // console.log(uploadfile)
 
         if (!uploadfile) {
             throw new apierror(300, "unable to upload the files")

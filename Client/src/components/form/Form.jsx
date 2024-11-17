@@ -11,9 +11,9 @@ import axios from 'axios'
 const Form = () => {
 
     const dispatch = useDispatch()
-    const [title, settitle] = useState('')
-    const [message, setmessage] = useState('')
-    const [creator, setcreator] = useState('')
+    const [title, setTitle] = useState('')
+    const [message, setMessage] = useState('')
+    const [creator, setCreator] = useState('')
     const [file, setfile] = useState(null)
 
     const status = useSelector((state) => state.posts.status)
@@ -24,7 +24,7 @@ const Form = () => {
     const handleonsubmit = async (e) => {
         e.preventDefault()
 
-        console.log("handleFileChange")
+        // console.log("handleFileChange")
 
 
         const formdata = new FormData()
@@ -58,45 +58,59 @@ const Form = () => {
 
 
     return (
-        <>
-            hi
-            <form onSubmit={handleonsubmit}>
-                <h2>Create New Post</h2>
-                <div>
-                    <label htmlFor="title">Title</label>
-                    <input
-                        type="text"
-                        id="title"
-                        value={title}
-                        onChange={(e) => settitle(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label htmlFor="message">message</label>
-                    <textarea
-                        id="message"
-                        value={message}
-                        onChange={(e) => setmessage(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label htmlFor="creator">creator</label>
-                    <textarea
-                        id="creator"
-                        value={creator}
-                        onChange={(e) => setcreator(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label htmlFor="selectedfile">File</label>
-                    <input type="file" id="selectedfile" onChange={handleFileChange} />
-                </div>
-                <button type="submit">Submit</button>
-            </form>
-        </>
+        <form onSubmit={handleonsubmit} className="space-y-6">
+            <div className="flex flex-col">
+                <label htmlFor="title" className="text-lg font-semibold text-gray-700">Title</label>
+                <input
+                    type="text"
+                    id="title"
+                    className="p-3 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    required
+                />
+            </div>
+
+            <div className="flex flex-col">
+                <label htmlFor="message" className="text-lg font-semibold text-gray-700">Message</label>
+                <textarea
+                    id="message"
+                    className="p-3 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    required
+                />
+            </div>
+
+            <div className="flex flex-col">
+                <label htmlFor="creator" className="text-lg font-semibold text-gray-700">Creator</label>
+                <input
+                    type="text"
+                    id="creator"
+                    className="p-3 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    value={creator}
+                    onChange={(e) => setCreator(e.target.value)}
+                    required
+                />
+            </div>
+
+            <div className="flex flex-col">
+                <label htmlFor="selectedfile" className="text-lg font-semibold text-gray-700">Upload Image</label>
+                <input
+                    type="file"
+                    id="selectedfile"
+                    onChange={handleFileChange}
+                    className="p-3 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+            </div>
+
+            <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-pink-500 to-yellow-500 text-white p-3 rounded-md shadow-lg font-semibold hover:bg-gradient-to-l"
+            >
+                Submit Post
+            </button>
+        </form>
     )
 }
 
