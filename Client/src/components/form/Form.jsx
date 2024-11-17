@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react'
 
 import { useSelector, useDispatch } from 'react-redux'
 
-import { createpost, fetchPostsAsync } from '../../redux/postslice'
+import { createpost, fetchPostsAsync, updatepost } from '../../redux/postslice'
 
 import { addPost } from '../../redux/postslice'
 import axios from 'axios'
+import { current } from '@reduxjs/toolkit'
 
 
-const Form = () => {
+const Form = ({ currentpost, setcurrentpost }) => {
 
     const dispatch = useDispatch()
     const [title, setTitle] = useState('')
@@ -17,16 +18,29 @@ const Form = () => {
     const [file, setfile] = useState(null)
 
     const status = useSelector((state) => state.posts.status)
+
+
+
     const handleFileChange = (e) => {
         const selectedFile = e.target.files[0];
         setfile(selectedFile);
     }
+
+
+    useEffect(() => {
+        if (currentpost) {
+            setTitle(currentpost.title)
+            setCreator(currentpost.creator)
+            setMessage(currentpost.message)
+            setfile(null)
+        }
+
+    }, [currentpost])
+
+
+
     const handleonsubmit = async (e) => {
         e.preventDefault()
-
-        // console.log("handleFileChange")
-
-
         const formdata = new FormData()
         formdata.append('title', title)
         formdata.append('message', message),
@@ -35,25 +49,49 @@ const Form = () => {
             formdata.append('selectedfile', file)
         }
 
-        try {
-            const response = await axios.post('http://localhost:4000/app/createpost', formdata, {
+        if (currentpost) {
+            // console.log(currentpost)
+            // const response = dispatch(updatepost(currentpost))
+            const response = await axios.patch(`http://localhost:4000/app/update/${currentpost._id}`, formdata, {
                 headers: {
                     'Content-Type': 'multipart/form-data', // Set the content type for file upload
                 },
             })
-            console.log(response)
-            if (response.status === 200) {
-                dispatch(addPost(response.data));
-                console.log('Post added successfully');
+            // console.log(response)
+            if (response.status == 200) {
+                dispatch(updatepost(response.data))
             }
-            else {
-                console.log("some error")
+            setTitle('')
+            setMessage('')
+            setCreator('')
+            setfile(null)
+        }
+        else {
+            try {
+                const response = await axios.post('http://localhost:4000/app/createpost', formdata, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data', // Set the content type for file upload
+                    },
+                })
+                console.log(response)
+                if (response.status === 200) {
+                    dispatch(addPost(response.data));
+                    console.log('Post added successfully');
+                    setTitle('')
+                    setMessage('')
+                    setCreator('')
+                    setfile(null)
+                }
+                else {
+                    console.log("some error")
 
+                }
+            }
+            catch (err) {
+                console.log(err)
             }
         }
-        catch (err) {
-            console.log(err)
-        }
+
     }
 
 

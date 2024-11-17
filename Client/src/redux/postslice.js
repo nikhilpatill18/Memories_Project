@@ -13,6 +13,17 @@ export const createpost = createAsyncThunk(
     }
 )
 
+export const updatepost = createAsyncThunk(
+    async (postdata) => {
+        const response = await axios.put(`http://localhost:4000/app/updatepost/${postdata_id}`, postdata, {
+            headers: {
+                'Content-Type': 'multipart/form-data', // Set the content type for file upload
+            },
+        })
+        return response.data.data
+    }
+)
+
 
 
 export const fetchPostsAsync = createAsyncThunk(
@@ -45,6 +56,15 @@ const postsslice = createSlice({
         addPost: (state, action) => {
             state.posts.push(action.payload)
         },
+        updatepost: (state, action) => {
+            state.posts = state.posts.map((post) => {
+                console.log(post._id)
+                if (post._id == action.payload._id) {
+                    return action.payload
+                }
+                return post
+            })
+        }
 
     }
     ,
@@ -62,9 +82,18 @@ const postsslice = createSlice({
                 state.status = 'failed';
                 state.error = action.error.message;
             })
-        // .addCase(createpost.fulfilled, (state, action) => {
-        //     state.posts.push(action.payload);  // Add new post to the state
-        // });
+            // .addCase(createpost.fulfilled, (state, action) => {
+            //     state.posts.push(action.payload);  // Add new post to the state
+            // });.
+            .addCase(updatepost.fulfilled, (state, action) => {
+                state.posts = state.posts.map((post) => {
+                    console.log(post._id)
+                    if (post._id == action.payload._id) {
+                        return action.payload
+                    }
+                    return post
+                })
+            })
     },
 
 })
