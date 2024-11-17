@@ -48,49 +48,30 @@ const Form = ({ currentpost, setcurrentpost }) => {
         if (file) {
             formdata.append('selectedfile', file)
         }
-
-        if (currentpost) {
-            // console.log(currentpost)
-            // const response = dispatch(updatepost(currentpost))
-            const response = await axios.patch(`http://localhost:4000/app/update/${currentpost._id}`, formdata, {
+        try {
+            const response = await axios.post('http://localhost:4000/app/createpost', formdata, {
                 headers: {
                     'Content-Type': 'multipart/form-data', // Set the content type for file upload
                 },
             })
             // console.log(response)
-            if (response.status == 200) {
-                dispatch(updatepost(response.data))
+            if (response.status === 200) {
+                dispatch(addPost(response.data));
+                console.log('Post added successfully');
+                setTitle('')
+                setMessage('')
+                setCreator('')
+                setfile(null)
             }
-            setTitle('')
-            setMessage('')
-            setCreator('')
-            setfile(null)
-        }
-        else {
-            try {
-                const response = await axios.post('http://localhost:4000/app/createpost', formdata, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data', // Set the content type for file upload
-                    },
-                })
-                console.log(response)
-                if (response.status === 200) {
-                    dispatch(addPost(response.data));
-                    console.log('Post added successfully');
-                    setTitle('')
-                    setMessage('')
-                    setCreator('')
-                    setfile(null)
-                }
-                else {
-                    console.log("some error")
+            else {
+                console.log("some error")
 
-                }
-            }
-            catch (err) {
-                console.log(err)
             }
         }
+        catch (err) {
+            console.log(err)
+        }
+
 
     }
 
