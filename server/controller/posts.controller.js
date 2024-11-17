@@ -4,9 +4,10 @@ import { apiresponse } from "../utils/apiresponse.js"
 import { apierror } from "../utils/apierror.js"
 import { uploadoncloudinary } from "../utils/fileupload.js"
 const posts = async (req, res) => {
-    res.status(200).json({
-        sucess: "ok"
-    })
+    const posts = await PostMessage.find()
+    console.log(posts)
+
+    return res.status(200).json(new apiresponse(200, posts, "get successfully"))
 }
 
 const createpost =

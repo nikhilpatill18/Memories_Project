@@ -5,5 +5,6 @@ import { upload } from "../middleware/multer.middleware.js";
 const postrouter = Router();
 
 postrouter.route('/createpost').post(upload.single('selectedfile'), createpost)
+postrouter.route('/getdata').get(posts)
 
 export { postrouter }

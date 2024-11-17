@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { useSelector, useDispatch } from 'react-redux'
 
-import { createpost } from '../../redux/postslice'
+import { createpost, fetchPostsAsync } from '../../redux/postslice'
 
 import { addPost } from '../../redux/postslice'
 import axios from 'axios'
@@ -15,6 +15,8 @@ const Form = () => {
     const [message, setmessage] = useState('')
     const [creator, setcreator] = useState('')
     const [file, setfile] = useState(null)
+
+    const status = useSelector((state) => state.posts.status)
     const handleFileChange = (e) => {
         const selectedFile = e.target.files[0];
         setfile(selectedFile);
